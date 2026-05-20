@@ -2122,9 +2122,10 @@ def load_character(character, name1, name2):
     greeting_field = 'greeting'
     picture = None
 
+    safe_name = sanitize_filename(character)
     filepath = None
     for extension in ["yml", "yaml", "json"]:
-        filepath = shared.user_data_dir / 'characters' / f'{character}.{extension}'
+        filepath = shared.user_data_dir / 'characters' / f'{safe_name}.{extension}'
         if filepath.exists():
             break
 
@@ -2140,7 +2141,7 @@ def load_character(character, name1, name2):
     for path in [cache_folder / "pfp_character.png", cache_folder / "pfp_character_thumb.png"]:
         path.unlink(missing_ok=True)
 
-    picture = generate_pfp_cache(character)
+    picture = generate_pfp_cache(safe_name)
 
     # Finding the bot's name
     for k in ['name', 'bot', '<|bot|>', 'char_name']:
