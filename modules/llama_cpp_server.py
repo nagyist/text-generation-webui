@@ -1,3 +1,4 @@
+import atexit
 import json
 import os
 import pprint
@@ -21,6 +22,7 @@ from modules.image_utils import (
 )
 from modules.logging_colors import logger
 from modules.utils import resolve_model_path
+from modules.windows_subprocess import bind_to_parent_lifetime
 
 llamacpp_valid_cache_types = {"fp16", "q8_0", "q4_0"}
 
@@ -576,6 +578,8 @@ class LlamaServer:
             bufsize=0,
             env=env
         )
+        bind_to_parent_lifetime(self.process.pid)
+        atexit.register(self.stop)
 
         threading.Thread(target=filter_stderr_with_progress, args=(self.process.stderr,), daemon=True).start()
 
@@ -615,6 +619,7 @@ class LlamaServer:
 
     def stop(self):
         """Stop the server process."""
+        atexit.unregister(self.stop)
         if self.process:
             self.process.terminate()
             try:
