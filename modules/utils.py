@@ -211,7 +211,8 @@ def is_mmproj_file(name):
 
 def find_sibling_mmproj(model_path):
     """Return an mmproj path relative to model_dir when exactly one mmproj file
-    sits next to the model in a subfolder of model_dir (any depth, not root).
+    sits in the same folder as the model, provided that folder is a subfolder
+    of model_dir (not model_dir itself).
     """
     try:
         model_path = Path(model_path)
